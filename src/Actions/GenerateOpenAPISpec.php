@@ -177,8 +177,7 @@ class GenerateOpenAPISpec
         $operation = $this->descriptorContainer->getDescriptor($routeAttributes)->describe($this, $schema, $routeAttributes);
 
 
-        $uri = '/'.$route->uri();
-        $routeUri = str_replace($this->jsonapiServer->baseUri(), '', $uri);
+        $routeUri = '/'.$route->uri();
 
         if ( ! isset($this->paths[$routeUri])) {
             $this->paths[$routeUri] = [];
@@ -239,7 +238,10 @@ class GenerateOpenAPISpec
 
                     // Try to get example data
                     try {
-                        $fieldSchema->example = $fieldValues[$field->name()];
+                        $fieldExample = $fieldValues[$field->name()];
+                        if($fieldExample){
+                          $fieldSchema->example = $fieldExample;
+                        }
                     } catch (Throwable $e) {
                     }
 
@@ -327,7 +329,7 @@ class GenerateOpenAPISpec
                 "id" => new OASchema([
                   'title' => 'id',
                   'type' => Type::STRING,
-                  "example" => isset($resource) ? $resource->id() : NULL,
+                  "example" => isset($resource) ? $resource->id() : '',
                 ]),
                 "attributes" => new OASchema([
                   'title' => 'attributes',
@@ -476,7 +478,7 @@ class GenerateOpenAPISpec
 
                     // Try to get example data
                     try {
-                        $fieldSchema->example = isset($model) ? $model->{$field->column()} : NULL;
+                        $fieldSchema->example = isset($model) ? $model->{$field->column()} : '';
                     } catch (Throwable $e) {
                     }
 
